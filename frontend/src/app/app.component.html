@@ -1,0 +1,71 @@
+<!-- pagina join -->
+<div class="join-screen" *ngIf="!hasJoined">
+  <div class="join-card">
+    <h1>💬 Chat App</h1>
+    <p>Introdu username-ul tau</p>
+    <input
+      class="input"
+      type="text"
+      placeholder="Username (ex: Andrei)"
+      [(ngModel)]="username"
+      (keydown.enter)="joinChat()"
+      maxlength="20"
+    />
+    <button class="btn-primary" (click)="joinChat()" [disabled]="!username.trim()">
+      Intră în chat
+    </button>
+  </div>
+</div>
+
+<!-- chat bubble area -->
+<div class="chat-wrapper" *ngIf="hasJoined">
+  <div class="chat-container">
+
+    <!-- top -->
+    <div class="chat-header">
+      <span class="header-title">💬 Chat</span>
+      <span class="user-badge">{{ username }}</span>
+    </div>
+
+    <!-- Zona de mesaje -->
+    <div class="messages-area" #messagesContainer>
+      <div *ngIf="messages.length === 0" class="empty-state">
+        Nu sunt mesaje inca. Fii primul!
+      </div>
+
+      <ng-container *ngFor="let msg of messages">
+        <!-- mesaj sistem -->
+        <div *ngIf="msg.type === 'system'" class="system-msg">
+          {{ msg.text }}
+        </div>
+
+        <!-- mesaj user -->
+        <div *ngIf="msg.type === 'message'"
+             class="msg-bubble"
+             [class.mine]="isMine(msg)"
+             [class.theirs]="!isMine(msg)">
+
+          <span class="msg-username" *ngIf="!isMine(msg)">{{ msg.username }}</span>
+          <div class="msg-text">{{ msg.text }}</div>
+          <span class="msg-time">{{ formatTime(msg.timestamp) }}</span>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- textbox & send -->
+    <div class="input-area">
+      <input
+        class="input msg-input"
+        type="text"
+        placeholder="Scrie un mesaj..."
+        [(ngModel)]="messageText"
+        (keydown.enter)="sendMessage()"
+        maxlength="500"
+      />
+      <button class="btn-send" (click)="sendMessage()" [disabled]="!messageText.trim()">
+        ➤
+      </button>
+    </div>
+
+  </div>
+</div>
